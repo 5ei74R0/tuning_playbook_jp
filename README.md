@@ -1,19 +1,20 @@
 ### From the translator, 5ei74R0
 This document is a translated & organized to be more accessible version of awesome [google-research/tuning_playbook](https://github.com/google-research/tuning_playbook).
-
+<br>
 I manually translated the original, in order to avoid potential mistranslations on technical terms and/or phrasing which could be caused by probabilistic output of the translation model trained on general-purpose corpora.
-
+<br>
 I would appreciate it if you could please leave a star for [this](https://github.com/5ei74R0/tuning_playbook_jp) and/or [original](https://github.com/google-research/tuning_playbook) repositories.
-
+<br>
 (March 5<sup>th</sup>, 2023)
+<br>
 <br>
 
 本ドキュメントは [google-research/tuning_playbook](https://github.com/google-research/tuning_playbook) を情報にアクセスしやすいよう翻訳・整理したものです．
-
+<br>
 汎用コーパスで学習させた翻訳モデルの確率的な出力に起因する専門用語や表現の誤訳を低減するため，可能な限り手動で翻訳しています．
-
+<br>
 よろしければ[本リポジトリ](https://github.com/5ei74R0/tuning_playbook_jp)や[元リポジトリ](https://github.com/google-research/tuning_playbook)にスターを付けていただけると幸いです．
-
+<br>
 (2023/03/05)
 <br>
 <br>
