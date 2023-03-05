@@ -21,7 +21,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 # Deep Learning Tuning Playbook (日本語版)
 
-*本ドキュメントは公式にサポートされたGoogleのプロダクトではありません．*
+_本ドキュメントは公式にサポートされたGoogleのプロダクトではありません_．
 
 **Varun Godbole<sup>&dagger;</sup>, George E. Dahl<sup>&dagger;</sup>, Justin Gilmer<sup>&dagger;</sup>, Christopher J. Shallue<sup>&Dagger;</sup>, Zachary Nado<sup>&dagger;</sup>**
 
