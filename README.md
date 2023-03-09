@@ -55,7 +55,7 @@ I would appreciate it if you could please leave a star for [this](https://github
     -   [チェックポイントの保存と最適なチェックポイントの選択](#チェックポイントの保存と最適なチェックポイントの選択)
     -   [実験のトラッキング](#実験のトラッキング)
     -   [Batch Normalizationの実装の詳細](#Batch-Normalizationの実装の詳細)
-    -   [マルチホストのトレーニングに関する注意](#マルチホストのトレーニングに関する注意)
+    -   [マルチホストの学習に関する注意](#マルチホストの学習に関する注意)
 -   [FAQs](#faqs)
 -   [謝辞](#謝辞)
 -   [引用](#引用)
@@ -113,18 +113,62 @@ I would appreciate it if you could please leave a star for [this](https://github
     - 理想を言えば同種の課題に対してよく用いられているオプティマイザを選ぶことが望ましいです．
 - 選択したオプティマイザの **「全ての」** ハイパーパラメータに注意を払う覚悟をしておきましょう．
     - より多くのハイパーパラメータを持つオプティマイザの最適な設定を見つけるにはチューニングにおいてより多くの手間を必要とします．
-    - これは特にプロジェクトの初期段階に関係してきます．モデルアーキテクチャのハイパーパラメータなどの様々なハイパーパラメータの最適な値を決める過程で，さらにオプティマイザのハイパーパラメータにまで気を配らなければならないのです．(cf., [nuisance parameters](#identifying-scientific-nuisance-and-fixed-hyperparameters))
+    - これは特にプロジェクトの初期段階に関連します．モデルアーキテクチャのハイパーパラメータなどの様々なハイパーパラメータの最適な値を決める過程で，さらにオプティマイザのハイパーパラメータにまで[nuisance parameters](#scientific-hyperparameternuisance-hyperparameterfixed-hyperparameterの特定)として気を配らなければならないのです．
     - プロジェクトの初期段階ではシンプルなオプティマイザ（例えば固定のモーメンタムを持つSGDや$\beta_{1}, \beta_{2}$を固定したAdam）から初めて，後から汎用的なオプティマイザに変更するのがよいかもしれません．
 - 十分に地位を確立しているオプティマイザとして我々が好んでいるものには（これらには限りませんが）次のようなオプティマイザが挙げられます．
-    - [SGD with momentum](#what-are-the-update-rules-for-all-the-popular-optimization-algorithms)（特にNesterov variantを好んでいます）
-    - [Adam and NAdam](#what-are-the-update-rules-for-all-the-popular-optimization-algorithms)
+    - [SGD with momentum](#有名な深層学習モデルの最適化アルゴリズムの更新則は?)（特にNesterov variantを好んでいます）
+    - [AdamおよびNAdam](#有名な深層学習モデルの最適化アルゴリズムの更新則は?)はSGD with momentumよりも一般的な手法です．Adamは4つのチューニング可能なハイパーパラメータを持ち，[その全てが重要](https://arxiv.org/abs/1910.05446)であることに注意してください．
+        - [Adamのハイパーパラメータのチューニング方法は？](#adamのハイパーパラメータのチューニング方法は)も参照してください．
 
 ### バッチサイズの選択
 
-**概要：** 
-*XXX*
+**概要：** バッチサイズは学習速度を左右するものであり，検証集合での性能を向上させるために直接使用されるべきではありません．多くの場合理想的なバッチサイズは利用できるハードウェアに載る範囲で最大のものになります．
 
-- XXX
+- バッチサイズは学習時間と計算資源の消費量を決定する鍵となる要素です．
+    - 大抵バッチサイズを大きくすると学習時間は短縮します．これは例えば以下のような理由で非常に有益です．
+        - 決まった時間内でより徹底的なハイパーパラメータチューニングを行えるので，最終的により良いモデルが得られる可能性があります．
+        - 開発サイクル中の待ち時間を削減できるので，新しいアイデアをより頻繁に検証できます．
+- バッチサイズの増加によって計算資源の消費量は増加するかもしれませんし，或いは減少するかもしれません．はたまた変わらない可能性もあります．
+- バッチサイズは検証集合における性能をチューニングできるハイパーパラメータとして扱うべきでは**ありません**．
+    - すべてのハイパーパラメータ（特に学習率や正則化ハイパーパラメータ）が適切にチューニングされ，学習ステップ数が十分である限り，どのバッチサイズでも同じ最終パフォーマンスを達成できます [[Shallue et al. 2018]](https://arxiv.org/abs/1811.03600)．
+    - [なぜバッチサイズは直接検証集合での性能を改善するためにチューニングしない方が良いのですか？](#なぜバッチサイズは直接検証集合での性能を改善するためにチューニングしない方が良いのですか)を参照してください．
+
+#### 実行可能なバッチサイズの決定及び学習スループットの推定
+
+<details><summary><em>[Click to expand]</em></summary>
+
+<br>
+
+- モデルとオプティマイザが与えられたとき，通常は利用できるハードウェアに載るバッチサイズの範囲があり，普通はハードウェアアクセラレータのメモリが制約になります．
+- 残念なことに，学習を行うプログラム全体を実行，コンパイルせずにメモリに収まるバッチサイズを計算することは困難です．
+- 最も簡単なのは学習を様々なバッチサイズで（例えば2の冪で増やしながら）少ないステップだけ実行し，メモリに収まらなくなるバッチサイズを探す方法です．
+- バッチサイズに対する学習スループット（"training throughput"）或いは1ステップ当たりの処理時間（"time per step"）を堅実に推定するには十分に長い時間学習を実行しなければなりません．
+
+<p align="center">training throughput = (# examples processed per second)</p>
+<p align="center">time per step = (batch size) / (training throughput)</p>
+
+-   When the accelerators aren't yet saturated, if the batch size doubles, the
+    training throughput should also double (or at least nearly double).
+    Equivalently, the time per step should be constant (or at least nearly
+    constant) as the batch size increases.
+-   If this is not the case then the training pipeline has a bottleneck such as
+    I/O or synchronization between compute nodes. This may be worth diagnosing
+    and correcting before proceeding.
+-   If the training throughput increases only up to some maximum batch size,
+    then we should only consider batch sizes up to that maximum batch size, even
+    if a larger batch size is supported by the hardware.
+    -   All benefits of using a larger batch size assume the training throughput
+        increases. If it doesn't, fix the bottleneck or use the smaller batch
+        size.
+    -   **Gradient accumulation** simulates a larger batch size than the
+        hardware can support and therefore does not provide any throughput
+        benefits. It should generally be avoided in applied work.
+-   These steps may need to be repeated every time the model or optimizer is
+    changed (e.g. a different model architecture may allow a larger batch size
+    to fit in memory).
+
+</details>
+
 
 ### ハイパーパラメータ等の初期設定
 
@@ -132,33 +176,29 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### 漸進的なチューニング戦略
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 ### 探索と活用 (Exploration vs exploitation)
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 ### 次の実験における目標設定
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 
 ### 次の実験の設計
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
-#### Identifying scientific, nuisance, and fixed hyperparameters
-<details><summary><em>[Click to expand]</em></summary>
+#### Scientific hyperparameter，nuisance hyperparameter，fixed hyperparameterの特定
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -169,7 +209,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Creating a set of studies
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -181,7 +221,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Striking a balance between informative and affordable experiments
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -192,14 +232,13 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### Extracting insight from experimental results
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 #### Identifying bad search space boundaries
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -210,7 +249,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Not sampling enough points in the search space
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -219,7 +258,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Examining the training curves
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -231,7 +270,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Detecting whether a change is useful with isolation plots
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -242,7 +281,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Automate generically useful plots
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -253,15 +292,13 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### 学習パイプラインに対する変更及びハイパーパラメータの更新を行うか判断する
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 ### 探索空間を特定した後 (After exploration concludes)
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
@@ -275,7 +312,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Algorithm for picking an initial candidate for max_train_steps using a learning rate sweep
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -290,7 +327,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Round 1
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -301,7 +338,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Round 2
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -314,19 +351,17 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### 入力パイプラインの最適化
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 ### モデルの性能評価
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 #### Evaluation settings
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -337,7 +372,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Setting up periodic evaluations
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -348,7 +383,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 #### Choosing a sample for periodic evaluation
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -359,29 +394,25 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### チェックポイントの保存と最適なチェックポイントの選択
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 ### 実験のトラッキング
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
 ### Batch Normalizationの実装の詳細
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
-### マルチホストのトレーニングに関する注意
+### マルチホストの学習に関する注意
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 - XXX
 
@@ -389,7 +420,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### What is the best learning rate decay schedule family?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -400,7 +431,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### Which learning rate decay should I use as a default?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -411,7 +442,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### Why do some papers have complicated learning rate schedules?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -420,9 +451,9 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 </details>
 
-### How should Adam’s hyperparameters be tuned?
+### Adamのハイパーパラメータのチューニング方法は？
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -433,7 +464,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### Why use quasi-random search instead of more sophisticated black box optimization algorithms during the exploration phase of tuning?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -444,7 +475,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### Where can I find an implementation of quasi-random search?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -455,7 +486,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### How many trials are needed to get good results with quasi-random search?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -466,14 +497,13 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### How can optimization failures be debugged and mitigated?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
 
 
-**概要：** 
-*XXX*
+**概要：** XXX
 
 #### Identifying unstable workloads
 - XXX
@@ -497,7 +527,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 ### Why do you call the learning rate and other optimization parameters hyperparameters? They are not parameters of any prior distribution.
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
@@ -506,20 +536,25 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 </details>
 
-### Why shouldn't the batch size be tuned to directly improve validation set performance?
+### なぜバッチサイズは直接検証集合での性能を改善するためにチューニングしない方が良いのですか？
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
 
-- XXX
+- **学習パイプラインの他の要素を変更せず**にバッチサイズを変更すると，大抵の場合，検証集合での性能に影響します．
+- ただし，学習パイプラインが各バッチサイズに対して独立に最適化される場合，2つのバッチサイズ間の検証集合での性能差は通常解消されます．
+- バッチサイズと最も強く相互作用するハイパーパラメータは，オプティマイザのハイパーパラメータ（例：学習率，モーメント）と正則化のハイパーパラメータです．
+    - **小さなバッチサイズは，サンプル分散によって学習アルゴリズムへのノイズを増やし，このノイズが正則化の効果を持つ可能性があります．そのため，大きなバッチサイズには過学習の傾向があり，より強力な正則化及びさらなる正則化テクニックを必要とする場合があります．**
+- さらに，バッチサイズを変更する場合，学習ステップの数を調整する必要がある可能性があります．
+- これら全ての効果を勘案すると，現時点では，バッチサイズが達成可能な検証集合での性能に影響を与えるという説得力のある証拠はありません[[Shallue et al. 2018]](https://arxiv.org/abs/1811.03600)．
 
 </details>
 
-### What are the update rules for all the popular optimization algorithms?
+### 有名な深層学習モデルの最適化アルゴリズムの更新則は?
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして開く]</em></summary>
 
 <br>
 
