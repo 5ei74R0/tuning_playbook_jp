@@ -66,20 +66,20 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 本書は**ハイパーパラメータチューニングの過程**に重点を置いていますが，パイプラインの実装や最適化など，深層学習の他の側面についても触れます．ただし，これらの側面を完全に扱うことは意図していません．
 
-本書では機械学習で扱う問題が教師あり学習や類似の形式（例えば自己教師あり学習）であることを仮定します．とはいえ，ここに記載された処方箋はその他の形式のタスクに関しても適用し得るものです．
+本書では機械学習で扱う問題が教師あり学習や類似の形式(例えば自己教師あり学習)であることを仮定します．とはいえ，ここに記載された処方箋はその他の形式のタスクに関しても適用し得るものです．
 
 
 ## Why a tuning playbook?
-昨今，深層学習モデルを実際にうまく機能させるために，驚くほど多くの労力や推測（当てずっぽう）が費やされています．
+昨今，深層学習モデルを実際にうまく機能させるために，驚くほど多くの労力や推測(当てずっぽう)が費やされています．
 さらに悪いことに，人々が実際に深層学習で良い結果を得るために使用したレシピを文書化することは稀です．論文ではよりきれいなストーリーを提示するために，最終的な結果に至った過程は隠蔽されてしまいますし，商業的な問題に取り組んでいる機械学習エンジニアが立ち戻って自身の踏んだ過程を一般化するために時間を取ることはほとんどありません．また，教科書はたとえその著者が応用的な仕事に置いて必要な経験を持ち，有益なアドバイスを提供できるとしても，実践的な指導を避けて基本原則の解説を優先する傾向にあります．
 我々が本書を作成する準備をする際，「どのように深層学習で良い結果を得るか」を実際に説明しようという包括的な試みを見つけることはできませんでした．代わりに見つかったのはブログ記事やソーシャルメディア上の断片的なアドバイス，研究論文の付録にちらりと顔をのぞかせているトリック，さらに特定のプロジェクト，パイプラインに関連する偶発的なケーススタディ，そしてあまたの混乱です．
 深層学習のエキスパートとそれに比べて熟達していない実務者が達成する成果には大きな隔たりがありますが，同時にこうしたエキスパートは，自身が行っている操作の中には十分に検証，証明されているわけではないものがあることをあっさり認めます．
 深層学習が成熟し，より大きなインパクトを世界に与えるようになる中，そのコミュニティには，良い結果を得る上で極めて重要になる実践的な詳細の全てを内包し，便利なレシピを網羅するリソースがより多く必要であると言えます．
 
-我々は長年（早いものは2006年から）深層学習に携わってきた5人のエンジニアと研究者からなるチームです．深層学習を音声認識から天文学まで幅広い問題に適用し，多くのことを学んできた．本書は我々自身がネットワークの学習，新たな機械学習エンジニアの教育，そして自身の同僚に対する深層学習の実用に関するアドバイスを行ってきた経験からうまれました．
+我々は長年(早いものは2006年から)深層学習に携わってきた5人のエンジニアと研究者からなるチームです．深層学習を音声認識から天文学まで幅広い問題に適用し，多くのことを学んできた．本書は我々自身がネットワークの学習，新たな機械学習エンジニアの教育，そして自身の同僚に対する深層学習の実用に関するアドバイスを行ってきた経験からうまれました．
 深層学習が一握りの学術研究所で行われていた機械学習の手法から，数十億もの人々が利用する製品を支える技術になったことは喜ばしいことではありますが，未だに深層学習は工学分野としては黎明期にあります．本書がこの分野の実験手続きの体系化の一助となることを期待しています．
 
-本書は我々自身の深層学習へのアプローチを明瞭化する試みからうまれたものです．そのため，本書は客観的事実ではなく執筆時点での著者の意見を示したものです．我々自身が特に苦労してきたのがハイパーパラメータチューニングであるため，特にハイパーパラメータチューニングに焦点が当てられています．しかし，我々が遭遇したその他の重要な（失敗に繋がった）問題に関しても取り上げます．
+本書は我々自身の深層学習へのアプローチを明瞭化する試みからうまれたものです．そのため，本書は客観的事実ではなく執筆時点での著者の意見を示したものです．我々自身が特に苦労してきたのがハイパーパラメータチューニングであるため，特にハイパーパラメータチューニングに焦点が当てられています．しかし，我々が遭遇したその他の重要な(失敗に繋がった)問題に関しても取り上げます．
 我々は本書が我々の信念の変化に応じて育ち，進化する生きたドキュメントにしたいと考えています．例えば学習失敗のデバッグ，低減に関する資料は最近の結果，あるいは進行中の調査に基づいているので，2年前には書けないものでした．
 本書によるアドバイスのいくつかは，必然的に新たな成果やワークフローの改善を考慮して更新する必要があります．我々は深層学習のレシピとして最適なものを知りませんし，これを見つけるにはコミュニティが様々な手順を書き出して議論を始めねばなりません．そのため，本書にあるアドバイスに問題を見つけた読者には，我々が本書の内容を更新していけるよう，説得力のある証拠とともに代替案を提供していただくことを奨励します．
 また，我々はコミュニティとしてベストプラクティスを目指す上で，本書のアドバイスとは異なる助言を伴う別のガイドやプレイブックを見てみたいと考えています．
@@ -99,8 +99,8 @@ I would appreciate it if you could please leave a star for [this](https://github
 **概要：** 新しくプロジェクトを始める際は，既に動作するモデルの再利用を試みましょう．
 
 - 作業を始める際は，十分に地位を確立しており，よく使われるモデルアーキテクチャを選択しましょう．カスタマイズしたモデルならあとでいつでも作成できます．
-- モデルアーキテクチャは典型的にはモデルサイズやその他の詳細を決定する様々なハイパーパラメータを持っています．<br>（例：層数，層の幅，活性化関数の種類）
-    - つまり，モデルアーキテクチャの選択というのは，実際には異なるモデルファミリーを選択することを意味します．（ハイパーパラメータの設定ごとに1つの特定のモデルに対応するモデルファミリーを選択することを意味します．）
+- モデルアーキテクチャは典型的にはモデルサイズやその他の詳細を決定する様々なハイパーパラメータを持っています．<br>(例：層数，層の幅，活性化関数の種類)
+    - つまり，モデルアーキテクチャの選択というのは，実際には異なるモデルファミリーを選択することを意味します．(ハイパーパラメータの設定ごとに1つの特定のモデルに対応するモデルファミリーを選択することを意味します．)
     - モデルのハイパーパラメータ設定に関しては，[ハイパーパラメータ等の初期設定](#ハイパーパラメータ等の初期設定)，[モデル性能を改善するための科学的アプローチ](#モデル性能を改善するための科学的アプローチ)において後述します．
 - 可能であれば対象の問題にできる限り近い課題に取り組んでいる論文を見つけ，出発点としてそのモデルの再現をすることを試みましょう．
 
@@ -114,10 +114,10 @@ I would appreciate it if you could please leave a star for [this](https://github
 - 選択したオプティマイザの **「全ての」** ハイパーパラメータに注意を払う覚悟をしておきましょう．
     - より多くのハイパーパラメータを持つオプティマイザの最適な設定を見つけるにはチューニングにおいてより多くの手間を必要とします．
     - これは特にプロジェクトの初期段階に関連します．モデルアーキテクチャのハイパーパラメータなどの様々なハイパーパラメータの最適な値を決める過程で，さらにオプティマイザのハイパーパラメータにまで[nuisance parameters](#scientific-hyperparameternuisance-hyperparameterfixed-hyperparameterの特定)として気を配らなければならないのです．
-    - プロジェクトの初期段階ではシンプルなオプティマイザ（例えば固定のモーメンタムを持つSGDや$\beta_{1}, \beta_{2}$を固定したAdam）から初めて，後から汎用的なオプティマイザに変更するのがよいかもしれません．
-- 十分に地位を確立しているオプティマイザとして我々が好んでいるものには（これらには限りませんが）次のようなオプティマイザが挙げられます．
-    - [SGD with momentum](#有名な深層学習モデルの最適化アルゴリズムの更新則は?)（特にNesterov variantを好んでいます）
-    - [AdamおよびNAdam](#有名な深層学習モデルの最適化アルゴリズムの更新則は?)はSGD with momentumよりも一般的な手法です．Adamは4つのチューニング可能なハイパーパラメータを持ち，[その全てが重要](https://arxiv.org/abs/1910.05446)であることに注意してください．
+    - プロジェクトの初期段階ではシンプルなオプティマイザ(例えば固定のモーメンタムを持つSGDや$\beta_{1}, \beta_{2}$を固定したAdam)から初めて，後から汎用的なオプティマイザに変更するのがよいかもしれません．
+- 十分に地位を確立しているオプティマイザとして我々が好んでいるものには(これらには限りませんが)次のようなオプティマイザが挙げられます．
+    - [SGD with momentum](#有名な深層学習モデルの最適化アルゴリズムの更新則は?)(特にNesterov variantを好んでいます)
+    - [AdamおよびNAdam](#有名な深層学習モデルの最適化アルゴリズムの更新則は?)はSGD with momentumよりも一般的な手法です．Adamは4つのチューニング可能なハイパーパラメータを持ち，[その全てが重要](https://arxiv.org/abs/1910.05446)であることに注意してください！
         - [Adamのハイパーパラメータのチューニング方法は？](#adamのハイパーパラメータのチューニング方法は)も参照してください．
 
 ### バッチサイズの選択
@@ -130,45 +130,133 @@ I would appreciate it if you could please leave a star for [this](https://github
         - 開発サイクル中の待ち時間を削減できるので，新しいアイデアをより頻繁に検証できます．
 - バッチサイズの増加によって計算資源の消費量は増加するかもしれませんし，或いは減少するかもしれません．はたまた変わらない可能性もあります．
 - バッチサイズは検証集合における性能をチューニングできるハイパーパラメータとして扱うべきでは**ありません**．
-    - すべてのハイパーパラメータ（特に学習率や正則化ハイパーパラメータ）が適切にチューニングされ，学習ステップ数が十分である限り，どのバッチサイズでも同じ最終パフォーマンスを達成できます [[Shallue et al. 2018]](https://arxiv.org/abs/1811.03600)．
+    - 全てのハイパーパラメータ(特に学習率や正則化ハイパーパラメータ)が適切にチューニングされ，学習ステップ数が十分である限り，どのバッチサイズでも同じ最終パフォーマンスを達成できます [[Shallue et al. 2018]](https://arxiv.org/abs/1811.03600)．
     - [なぜバッチサイズは直接検証集合での性能を改善するためにチューニングしない方が良いのですか？](#なぜバッチサイズは直接検証集合での性能を改善するためにチューニングしない方が良いのですか)を参照してください．
 
 #### 実行可能なバッチサイズの決定及び学習スループットの推定
 
-<details><summary><em>[Click to expand]</em></summary>
+<details><summary><em>[クリックして展開]</em></summary>
 
 <br>
 
 - モデルとオプティマイザが与えられたとき，通常は利用できるハードウェアに載るバッチサイズの範囲があり，普通はハードウェアアクセラレータのメモリが制約になります．
 - 残念なことに，学習を行うプログラム全体を実行，コンパイルせずにメモリに収まるバッチサイズを計算することは困難です．
-- 最も簡単なのは学習を様々なバッチサイズで（例えば2の冪で増やしながら）少ないステップだけ実行し，メモリに収まらなくなるバッチサイズを探す方法です．
-- バッチサイズに対する学習スループット（"training throughput"）或いは1ステップ当たりの処理時間（"time per step"）を堅実に推定するには十分に長い時間学習を実行しなければなりません．
+- 最も簡単なのは学習を様々なバッチサイズで(例えば2の冪で増やしながら)少ないステップだけ実行し，メモリに収まらなくなるバッチサイズを探す方法です．
+- バッチサイズに対する学習スループット("training throughput")或いは1ステップ当たりの処理時間("time per step")を堅実に推定するには十分に長い時間学習を実行しなければなりません．
 
 <p align="center">training throughput = (# examples processed per second)</p>
 <p align="center">time per step = (batch size) / (training throughput)</p>
 
--   When the accelerators aren't yet saturated, if the batch size doubles, the
-    training throughput should also double (or at least nearly double).
-    Equivalently, the time per step should be constant (or at least nearly
-    constant) as the batch size increases.
--   If this is not the case then the training pipeline has a bottleneck such as
-    I/O or synchronization between compute nodes. This may be worth diagnosing
-    and correcting before proceeding.
--   If the training throughput increases only up to some maximum batch size,
-    then we should only consider batch sizes up to that maximum batch size, even
-    if a larger batch size is supported by the hardware.
-    -   All benefits of using a larger batch size assume the training throughput
-        increases. If it doesn't, fix the bottleneck or use the smaller batch
-        size.
-    -   **Gradient accumulation** simulates a larger batch size than the
-        hardware can support and therefore does not provide any throughput
-        benefits. It should generally be avoided in applied work.
--   These steps may need to be repeated every time the model or optimizer is
-    changed (e.g. a different model architecture may allow a larger batch size
-    to fit in memory).
+- アクセラレータがまだ飽和していない場合，バッチサイズが2倍になると，学習スループットも2倍になる(少なくともほぼ2倍になる)はずです．同様に，1ステップ当たりの処理時間は，バッチサイズが増加するにつれて一定(少なくともほぼ一定)であるべきです．
+- これが当てはまらない場合，学習パイプラインにはI/Oや計算ノード間の同期などのボトルネックがある可能性があります．これを診断して修正する価値があるかもしれません．
+- 学習スループットがある最大バッチサイズまでしか増加しない場合，たとえハードウェアがより大きなバッチサイズをサポートしていても，その最大バッチサイズまでのバッチサイズのみを検討するべきです．
+- より大きなバッチサイズを使用することの利点は，学習スループットが増加することを前提としています．そうでない場合は，ボトルネックを修正するか，より小さいバッチサイズを使用しましょう．
+- **Gradient accumulation** は，ハードウェアがサポートできるより大きなバッチサイズをシミュレートしますが，スループットの利点はありません．そのため，実用的な作業では一般的に避けるべきです．
+- これらのステップは，モデルやオプティマイザーが変更されるたびに繰り返す必要があります(例えば，異なるモデルアーキテクチャでは，より大きなバッチサイズがメモリに収まる可能性があります)．
 
 </details>
 
+#### 学習時間を最小化するバッチサイズの選択
+
+<details><summary><em>[クリックして展開]</em></summary>
+
+<br>
+
+<p align="center">Training time = (time per step) x (total number of steps)</p>
+
+- 全ての学習ボトルネックが診断，修正され，さらに並列計算によるオーバーヘッドがない場合，1ステップ当たりの処理時間をほぼ一定とみなすことができます(学習ボトルネックを特定する方法については，[前のセクション](#実行可能なバッチサイズの決定及び学習スループットの推定)を参照)．実際には，バッチサイズを増やすことで，少なくともいくらかのオーバーヘッドが発生します．
+- バッチサイズが増えるにつれて，一定の性能に到達するために必要な合計ステップ数は通常減少します(バッチサイズが変更されたときに関連する全てのハイパーパラメータが再度調整される場合) [[Shallue et al. 2018]](https://arxiv.org/abs/1811.03600)．
+    - 例えば，バッチサイズを倍にすると必要な合計ステップ数が半分になる場合があります．これを **完全スケーリング (perfect scaling)** と呼びます．
+    - 完全スケーリングは，クリティカルバッチサイズ (critical batch size)(訳者注: 学習スループットを最大化するバッチサイズ) までの全てのバッチサイズに対して成立します．それ以降は，効果が小さくなります．
+    - 最終的に，バッチサイズを増やしても学習ステップ数は減少しなくなります(ただし，増加することはありません)．
+- 従って，学習時間を最小化するバッチサイズは通常，学習ステップ数が減少するバッチサイズの内最大のものです．
+    - このバッチサイズは，データセット，モデル，およびオプティマイザに依存し，新規タスクについて実験的に見つける以外に最大バッチサイズを算出する方法は未解決の問題です．🤖
+    - バッチサイズを比較する場合は，"example budget / [epoch](https://developers.google.com/machine-learning/glossary#epoch) budget"(学習サンプルの出現数を固定して全ての実験を行う場合)と"step budget"(学習ステップ数を固定して全ての実験を行う場合)の区別に注意してください．
+        - epoch budgetでバッチサイズを比較すると，より大きなバッチサイズの選択によって学習ステップ数の削減による高速化ができる可能性がある場合でも，完全スケーリングの範囲のみを調査します．
+    - 利用可能なハードウェアでサポートされる最大バッチサイズが，クリティカルバッチサイズよりも小さくなることはよくあります．そのため，(実験せずにバッチサイズを決める場合の)大まかな方法は，可能な限り最大のバッチサイズを使用することになります．
+- もしも学習時間が増加するなら，より大きなバッチサイズを使用する意味はありません．
+
+</details>
+
+#### Choosing the batch size to minimize resource consumption
+
+<details><summary><em>[クリックして展開]</em></summary>
+
+<br>
+
+
+-   There are two types of resource costs associated with increasing the batch
+    size:
+    1.  *Upfront costs*, e.g. purchasing new hardware or rewriting the training
+        pipeline to implement multi-GPU / multi-TPU training.
+    2.  *Usage costs*, e.g. billing against the team's resource budgets, billing
+        from a cloud provider, electricity / maintenance costs.
+-   If there are significant upfront costs to increasing the batch size, it
+    might be better to defer increasing the batch size until the project has
+    matured and it is easier to assess the cost-benefit tradeoff. Implementing
+    multi-host parallel training programs can introduce
+    [bugs](#considerations-for-multi-host-pipelines) and
+    [subtle issues](#batch-normalization-implementation-details) so it is
+    probably better to start off with a simpler pipeline anyway. (On the other
+    hand, a large speedup in training time might be very beneficial early in the
+    process when a lot of tuning experiments are needed).
+-   We refer to the total usage cost (which may include multiple different kinds
+    of costs) as the "resource consumption". We can break down the resource
+    consumption into the following components:
+
+<p align="center">Resource consumption = (resource consumption per step) x (total number of steps)</p>
+
+-   Increasing the batch size usually allows us to
+    [reduce the total number of steps](#choosing-the-batch-size-to-minimize-training-time).
+    Whether the resource consumption increases or decreases will depend on how
+    the consumption per step changes.
+    -   Increasing the batch size might *decrease* the resource consumption. For
+        example, if each step with the larger batch size can be run on the same
+        hardware as the smaller batch size (with only a small increase in time
+        per step), then any increase in the resource consumption per step might
+        be outweighed by the decrease in the number of steps.
+    -   Increasing the batch size might *not change* the resource consumption.
+        For example, if doubling the batch size halves the number of steps
+        required and doubles the number of GPUs used, the total consumption (in
+        terms of GPU-hours) will not change.
+    -   Increasing the batch size might *increase* the resource consumption. For
+        example, if increasing the batch size requires upgraded hardware, the
+        increase in consumption per step might outweigh the reduction in the
+        number of steps.
+
+</details>
+
+#### Changing the batch size requires re-tuning most hyperparameters
+
+<details><summary><em>[クリックして展開]</em></summary>
+
+<br>
+
+
+-   The optimal values of most hyperparameters are sensitive to the batch size.
+    Therefore, changing the batch size typically requires starting the tuning
+    process all over again.
+-   The hyperparameters that interact most strongly with the batch size, and therefore are most important to tune separately for each batch size, are the optimizer hyperparameters (e.g. learning rate, momentum) and the regularization hyperparameters.
+-   Keep this in mind when choosing the batch size at the start of a project. If
+    you need to switch to a different batch size later on, it might be
+    difficult, time consuming, and expensive to re-tune everything for the new
+    batch size.
+
+</details>
+
+#### How batch norm interacts with the batch size
+
+<details><summary><em>[クリックして展開]</em></summary>
+
+<br>
+
+
+-   Batch norm is complicated and, in general, should use a different batch size
+    than the gradient computation to compute statistics. See the
+    [batch norm section](#batch-normalization-implementation-details) for a
+    detailed discussion.
+
+</details>
 
 ### ハイパーパラメータ等の初期設定
 
@@ -545,7 +633,7 @@ I would appreciate it if you could please leave a star for [this](https://github
 
 - **学習パイプラインの他の要素を変更せず**にバッチサイズを変更すると，大抵の場合，検証集合での性能に影響します．
 - ただし，学習パイプラインが各バッチサイズに対して独立に最適化される場合，2つのバッチサイズ間の検証集合での性能差は通常解消されます．
-- バッチサイズと最も強く相互作用するハイパーパラメータは，オプティマイザのハイパーパラメータ（例：学習率，モーメント）と正則化のハイパーパラメータです．
+- バッチサイズと最も強く相互作用するハイパーパラメータは，オプティマイザのハイパーパラメータ(例：学習率，モーメント)と正則化のハイパーパラメータです．
     - **小さなバッチサイズは，サンプル分散によって学習アルゴリズムへのノイズを増やし，このノイズが正則化の効果を持つ可能性があります．そのため，大きなバッチサイズには過学習の傾向があり，より強力な正則化及びさらなる正則化テクニックを必要とする場合があります．**
 - さらに，バッチサイズを変更する場合，学習ステップの数を調整する必要がある可能性があります．
 - これら全ての効果を勘案すると，現時点では，バッチサイズが達成可能な検証集合での性能に影響を与えるという説得力のある証拠はありません[[Shallue et al. 2018]](https://arxiv.org/abs/1811.03600)．
